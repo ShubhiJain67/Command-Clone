@@ -1,11 +1,81 @@
 #!/usr/bin/env node
-
+let availableOperations = [
+	{
+		name: '-s',
+		description: 'to reduce large line gaps to single line gap',
+	},
+	{
+		name: '-n',
+		description: 'to number only non empty lines',
+	},
+	{
+		name: '-ne',
+		description: 'to number al lines',
+	},
+	{
+		name: '-cat',
+		description: 'to concatenate all mentioned files',
+	},
+	{
+		name: '-p',
+		description: 'to convert the file into a paragraph',
+	},
+	{
+		name: '-r',
+		description: 'remove all extra spaces',
+	},
+	{
+		name: '-t',
+		description: 'trim extra spaces from ends of each line of files',
+	},
+];
 //--------------------------------------------- Functions -------------------------------------------
 function print(message) {
 	console.log(message);
 }
 
+function printError(message) {
+	console.log(`ERROR!!-----------------> ${message}`);
+}
+
+function printSyntaxError() {
+	console.log(`Invalid Command!
+    The coorect syntax is as follows :
+    {operation type(s)} {filename(s)}`);
+	printAvailableOperations();
+}
+
+function printAvailableOperations() {
+	let message = `Available Operation Types :`;
+	let count = 1;
+	availableOperations.forEach((operation) => {
+		message += `\n${count}. ${operation.name} : ${operation.description}`;
+		count++;
+	});
+	console.log(message);
+}
+
+function checkIfValidOperations(operations = []) {
+	if (operations.length === 0) {
+		printError('No operation mentioned!');
+		printSyntaxError();
+	}
+	let count = 0;
+	operations.forEach((operation) => {
+		availableOperations.forEach((availableOperation) => {
+			if (availableOperation.name === operation) {
+				count++;
+			}
+		});
+	});
+	return count === operations.length;
+}
+
 function checkEsitanceOfAllFiles(files = []) {
+	if (files.length == 0) {
+		printError('No files mentioned');
+		return false;
+	}
 	let fileSystem = require('fs');
 	let filesNotFound = [];
 	files.forEach((file) => {
@@ -14,40 +84,7 @@ function checkEsitanceOfAllFiles(files = []) {
 		}
 	});
 	if (filesNotFound.length > 0) {
-		console.log(`ERROR!! Following Files were not found : ${filesNotFound}`);
-		return false;
-	}
-	return true;
-}
-
-function checkIfValidOperations(operations = []) {
-	let operationsNotFound = [];
-	operations.forEach((operation) => {
-		switch (operation) {
-			case '-s':
-				break;
-			case '-n':
-				break;
-			case '-ne':
-				break;
-			case '-cat':
-				break;
-			case '-p':
-				break;
-			case '-r':
-				break;
-			case '-t':
-				break;
-			case 'rs':
-				break;
-			default:
-				operationsNotFound.push(operation);
-		}
-	});
-	if (operationsNotFound.length > 0) {
-		console.log(
-			`ERROR!! Following Operations were not found : ${operationsNotFound}`
-		);
+		printError(`Following Files were not found : ${filesNotFound}`);
 		return false;
 	}
 	return true;
@@ -103,11 +140,11 @@ function performAllOperations(file = '') {
 	} else if (operations.includes('-n')) {
 		file = numberLines(file, false);
 	}
-	if (operations.includes('-r')) {
-		file = removeAllExtraSpaces(file);
-	}
 	if (operations.includes('-p')) {
 		file = convertToParagraph(file);
+	}
+	if (operations.includes('-r')) {
+		file = removeAllExtraSpaces(file);
 	}
 	if (operations.includes('-t')) {
 		file = removeExtraSpacesFromEnds(file);
@@ -157,6 +194,7 @@ function removeAllExtraSpaces(file) {
 }
 
 //-------------------------------------------- Cat commond clone starts here --------------------------------
+
 let fileSystem = require('fs');
 let arguments = process.argv.slice(2);
 let operations = [];
@@ -172,32 +210,33 @@ arguments.forEach((element) => {
 	}
 });
 
-filesCheck = checkEsitanceOfAllFiles(files);
-operationsCheck = checkIfValidOperations(operations);
-
-if (filesCheck && operationsCheck) {
-	if (operations.length == 0) {
-		print(`ERROR!! Please specify the operation to perform :
-                1. -s   : to reduce large line gaps to single line gap
-                2. -n   : to number only non empty lines
-                3. -ne  : to number al lines
-                4. -cat : to concatenate all mentioned files
-				5. -p   : to convert the file into a paragraph
-				6. -r   : remove extra spaces
-				7. -t   : trim extra spaces from ends of each line of files
-				8. -rs  : remove all extra spaces`);
-	} else if (files.length == 0) {
-		print(
-			'ERROR!! Please specify the files on which you need to perfom the operations'
-		);
-	} else {
-		if (operations.includes('-cat') || files.length == 1) {
-			resultFile = concatAllFiles(files);
-			print(performAllOperations(resultFile));
-		} else if (files.length > 1) {
-			print(
-				'ERROR!! Either add the -cat command to concatenate all files or specify a single file.'
+if (operations.includes('-help')) {
+	printAvailableOperations();
+} else {
+	filesCheck = checkEsitanceOfAllFiles(files);
+	operationsCheck = checkIfValidOperations(operations);
+	print(`${filesCheck}  ${operationsCheck}`);
+	if (filesCheck && operationsCheck) {
+		if (operations.length == 0) {
+			printError(`Please specify the operation to perform`);
+			printSyntaxError();
+		} else if (files.length == 0) {
+			printError(
+				'Please specify the files on which you need to perfom the operations'
 			);
+			printSyntaxError();
+		} else {
+			if (operations.includes('-cat') || files.length == 1) {
+				resultFile = concatAllFiles(files);
+				print(performAllOperations(resultFile));
+			} else if (files.length > 1) {
+				printError(
+					'Either add the -cat command to concatenate all files or specify a single file.'
+				);
+				printSyntaxError();
+			}
 		}
+	} else {
+		printSyntaxError();
 	}
 }
