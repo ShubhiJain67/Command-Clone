@@ -109,7 +109,10 @@ let arguments = process.argv.slice(2);
 if (checkForCorrectSyntax(arguments)) {
 	let operation = arguments[0];
 	let name = arguments[1];
-	let count = parseInt(arguments[3]);
+	let count = 1
+	if(arguments[3] !== undefined){
+		count = parseInt(arguments[3]);
+	}
 	if (operation === '-createFolder') {
 		createFolder(name, count);
 	} else if (operation === '-removeFolder') {
