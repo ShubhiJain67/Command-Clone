@@ -38,6 +38,8 @@ function checkIfValidOperations(operations = []) {
 				break;
 			case '-t':
 				break;
+			case 'rs':
+				break;
 			default:
 				operationsNotFound.push(operation);
 		}
@@ -102,7 +104,7 @@ function performAllOperations(file = '') {
 		file = numberLines(file, false);
 	}
 	if (operations.includes('-r')) {
-		file = removeExtraSpaces(file);
+		file = removeAllExtraSpaces(file);
 	}
 	if (operations.includes('-p')) {
 		file = convertToParagraph(file);
@@ -131,18 +133,26 @@ function convertToParagraph(file) {
 	return file.replace(/\s+/g, ' ');
 }
 
-function removeExtraSpaces(file) {
-	return file.replace(/' '+/g, ' ');
+function removeExtraSpacesFromEnds(file) {
+	let returnFile = (function (files) {
+		let result = [];
+		files.forEach((file) => {
+			result.push(file.trim());
+		});
+		return result.join('\n');
+	})(file.split('\n'));
+	return returnFile;
 }
 
-function removeExtraSpacesFromEnds(file){
-	let returnFile = (function(files){
+function removeAllExtraSpaces(file) {
+	let returnFile = (function (files) {
 		let result = [];
-		files.forEach((file) =>{
-			result.push(file.trim());
-		} );
-		return result.join("\n");
-	})(file.split("\n"));
+		files.forEach((file) => {
+			file = file.trim();
+			result.push(file.replace(/\s+/g, ' '));
+		});
+		return result.join('\n');
+	})(file.split('\n'));
 	return returnFile;
 }
 
@@ -174,7 +184,8 @@ if (filesCheck && operationsCheck) {
                 4. -cat : to concatenate all mentioned files
 				5. -p   : to convert the file into a paragraph
 				6. -r   : remove extra spaces
-				7. -t   : trim extra spaces from ends of each line of files`);
+				7. -t   : trim extra spaces from ends of each line of files
+				8. -rs  : remove all extra spaces`);
 	} else if (files.length == 0) {
 		print(
 			'ERROR!! Please specify the files on which you need to perfom the operations'
