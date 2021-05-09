@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+//--------------------------------------------- Basic Setup -------------------------------------------
+let syntax = `{operation type(s)} {filename(s)}`;
 let availableOperations = [
 	{
 		name: '-s',
@@ -41,7 +43,7 @@ function printError(message) {
 function printSyntaxError() {
 	console.log(`Invalid Command!
     The coorect syntax is as follows :
-    {operation type(s)} {filename(s)}`);
+    ${syntax}`);
 	printAvailableOperations();
 }
 
