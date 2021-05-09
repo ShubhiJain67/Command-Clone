@@ -36,6 +36,8 @@ function checkIfValidOperations(operations = []) {
 				break;
 			case '-r':
 				break;
+			case '-t':
+				break;
 			default:
 				operationsNotFound.push(operation);
 		}
@@ -105,6 +107,9 @@ function performAllOperations(file = '') {
 	if (operations.includes('-p')) {
 		file = convertToParagraph(file);
 	}
+	if (operations.includes('-t')) {
+		file = removeExtraSpacesFromEnds(file);
+	}
 	return file;
 }
 
@@ -128,6 +133,17 @@ function convertToParagraph(file) {
 
 function removeExtraSpaces(file) {
 	return file.replace(/' '+/g, ' ');
+}
+
+function removeExtraSpacesFromEnds(file){
+	let returnFile = (function(files){
+		let result = [];
+		files.forEach((file) =>{
+			result.push(file.trim());
+		} );
+		return result.join("\n");
+	})(file.split("\n"));
+	return returnFile;
 }
 
 //-------------------------------------------- Cat commond clone starts here --------------------------------
@@ -157,7 +173,8 @@ if (filesCheck && operationsCheck) {
                 3. -ne  : to number al lines
                 4. -cat : to concatenate all mentioned files
 				5. -p   : to convert the file into a paragraph
-				6. -r   : remove extra spaces`);
+				6. -r   : remove extra spaces
+				7. -t   : trim extra spaces from ends of each line of files`);
 	} else if (files.length == 0) {
 		print(
 			'ERROR!! Please specify the files on which you need to perfom the operations'
