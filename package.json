@@ -1,0 +1,23 @@
+{
+  "name": "clonecommand",
+  "version": "1.0.0",
+  "description": "This contains clonedversions of cmd commands",
+  "main": "operate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node operate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShubhiJain67/Javascript-Experiments.git"
+  },
+  "bin": {
+    "operate": "operate.js"
+  },
+  "author": "Shubhi Jain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShubhiJain67/Javascript-Experiments/issues"
+  },
+  "homepage": "https://github.com/ShubhiJain67/Javascript-Experiments#readme"
+}
